@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>검색 결과</title></head>
+<body>
+  <h1 id="h">검색 결과</h1>
+  <a href="index.html">처음으로</a>
+  <script>
+    const q = new URLSearchParams(location.search).get("q") || "";
+    document.getElementById("h").textContent = "검색 결과: " + q;
+  </script>
+</body>
+</html>

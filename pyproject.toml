@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sonnun"
+version = "0.1.0"
+description = "손눈서브 — eyes and hands for a local agent in your own Chrome (extension + local server, closed-network friendly)"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE*", "NOTICE*"]
+dependencies = ["fastapi", "uvicorn[standard]", "pydantic>=2"]
+
+[project.optional-dependencies]
+dev = ["playwright", "numpy"]                    # tools/browser_check.py · voice_check.py · Playwright 형식 내보내기
+stt = ["faster-whisper", "numpy"]                # tools/stt_server.py (음성 입력 Whisper 엔진)
+
+[project.scripts]
+sonnun = "sonnun.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["sonnun*"]
+
+[tool.setuptools.package-data]
+sonnun = ["playground/*"]

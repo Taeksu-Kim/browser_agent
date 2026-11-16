@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>플레이그라운드 프레임</title>
+<style>
+  body { margin: 8px; font: 14px/1.5 -apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; color:#1d2127; background:#fff; }
+  @media (prefers-color-scheme: dark) { body { color:#e6e8eb; background:#22252b; } }
+  button, input { font: inherit; min-height: 32px; }
+  .origin { color: #5b636e; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="origin" id="origin"></div>
+  <span id="slot"></span>
+<script>
+  const q = new URLSearchParams(location.search);
+  document.getElementById("origin").textContent = "이 프레임의 출처: " + location.origin;
+  const send = (sid, trusted, note) => parent.postMessage({ sonnunPlayground: true, sid, trusted, note }, "*");
+  const slot = document.getElementById("slot");
+  const btn = q.get("btn");
+  if (btn) {
+    const b = document.createElement("button");
+    b.textContent = btn === "S8" ? "S8 다른 출처 버튼" : `${btn} iframe 버튼`;
+    b.addEventListener("click", (e) => send(btn, e.isTrusted));
+    slot.append(b, " ");
+  }
+  const inp = q.get("input");
+  if (inp) {
+    const l = document.createElement("label");
+    l.textContent = `${inp} iframe 입력 `;
+    const i = document.createElement("input");
+    i.type = "text";
+    i.setAttribute("aria-label", `${inp} iframe 입력`);
+    i.addEventListener("input", (e) => { if (e.target.value.trim()) send(inp, e.isTrusted, `"${e.target.value}"`); });
+    l.append(i);
+    slot.append(l);
+  }
+</script>
+</body>
+</html>

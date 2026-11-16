@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>손눈서브 설정</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <header class="bar">
+    <img src="icons/icon32.png" alt="" width="20" height="20">
+    <strong class="brand">손눈서브 설정</strong>
+  </header>
+
+  <main class="page">
+    <section aria-labelledby="hSites">
+      <h2 id="hSites">사이트 권한</h2>
+      <p class="hint">에이전트가 어느 사이트를 볼 수 있고 조작할 수 있는지 정합니다. 규칙은 그 사이트와 하위 주소(www.·m. 등)에 모두 적용되고,
+        겹치면 더 구체적인 규칙이 이깁니다.</p>
+
+      <div class="row default">
+        <span class="row-label">처음 보는 사이트</span>
+        <div id="defaultLevels" class="seg" role="radiogroup" aria-label="처음 보는 사이트 권한">
+          <button type="button" role="radio" data-level="off" aria-checked="false">끔</button>
+          <button type="button" role="radio" data-level="eye" aria-checked="false">눈길</button>
+          <button type="button" role="radio" data-level="hand" aria-checked="false">손길</button>
+        </div>
+      </div>
+      <p id="defaultHint" class="hint"></p>
+
+      <form id="addForm" class="add" autocomplete="off">
+        <label class="sr" for="addSite">추가할 사이트</label>
+        <input id="addSite" type="text" spellcheck="false" placeholder="사이트 이름이나 주소 — 예: 증권사·은행 주소를 붙여넣기">
+        <select id="addLevel" aria-label="추가할 사이트의 권한">
+          <option value="off" selected>끔</option>
+          <option value="eye">눈길 (보기만)</option>
+          <option value="hand">손길 (보기+조작)</option>
+        </select>
+        <button id="addBtn" type="submit" class="primary">추가</button>
+      </form>
+      <p id="addMsg" class="hint" aria-live="polite"></p>
+
+      <div id="listTools" class="list-tools" hidden>
+        <span id="counts" class="hint"></span>
+        <input id="filter" type="search" spellcheck="false" placeholder="목록에서 찾기" aria-label="목록에서 찾기">
+      </div>
+      <ul id="rules" class="rules" aria-label="사이트별 권한"></ul>
+    </section>
+
+    <section aria-labelledby="hConfirm">
+      <h2 id="hConfirm">되돌리기 어려운 동작 승인</h2>
+      <label class="radio"><input id="confirmOn" type="checkbox"> 이름에 아래 말이 든 버튼·폼 제출은 누르기 전에 패널에서 묻기</label>
+      <label class="field">물어볼 말 (쉼표로 구분)
+        <textarea id="confirmWords" rows="3" spellcheck="false"></textarea>
+      </label>
+      <div class="row">
+        <label class="field inline">답을 기다리는 시간
+          <input id="approvalTimeout" type="number" min="30" max="600" step="10" inputmode="numeric"> 초
+        </label>
+        <button id="resetWords" type="button" class="ghost">기본 말로 되돌리기</button>
+      </div>
+      <p class="hint">버튼 이름의 글자를 비교합니다 — 아이콘만 있는 결제 버튼은 빠질 수 있으니, 돈이 오가는 사이트는 위 목록에서 끔·눈길로 두세요.
+        시간 안에 답하지 않으면 누르지 않습니다.</p>
+      <p id="confirmMsg" class="hint saved" aria-live="polite"></p>
+    </section>
+
+    <section id="mic" aria-labelledby="hVoice">
+      <h2 id="hVoice">음성 입력</h2>
+      <p class="hint">패널의 🎤 를 누르고 말하면, 말을 멈출 때 알아서 끝나고 글로 바뀝니다. 녹음·받아적은 글은 저장하지 않습니다 (보낸 글만 대화에 남음).</p>
+      <h3>받아적는 엔진</h3>
+      <div class="radios" role="radiogroup" aria-label="받아적는 엔진">
+        <label class="radio"><input type="radio" name="voiceEngine" value="google"> Google 음성 인식 (Chrome 내장) — 인터넷 필요. 내 말이 Google 로 갑니다 (페이지 내용은 안 감)</label>
+        <label class="radio"><input type="radio" name="voiceEngine" value="whisper"> Whisper (이 컴퓨터 안) — 폐쇄망에서도. 음성 서버가 켜져 있어야 하고 GPU 를 약 1.5GB 씁니다</label>
+      </div>
+      <p id="sttState" class="hint"></p>
+      <h3>말을 멈춘 뒤</h3>
+      <div class="radios" role="radiogroup" aria-label="말을 멈춘 뒤">
+        <label class="radio"><input type="radio" name="voiceMode" value="preview"> 받아적은 글을 잠깐(1.5초) 보여 주고 보내기 — 그사이 입력창을 누르면 보내지 않음</label>
+        <label class="radio"><input type="radio" name="voiceMode" value="auto"> 바로 보내기</label>
+        <label class="radio"><input type="radio" name="voiceMode" value="fill"> 입력창에만 넣기 — Enter 는 직접</label>
+      </div>
+      <div class="row">
+        <button id="micAllow" type="button" class="ghost">마이크 허용하기</button>
+        <span id="micState" class="hint"></span>
+      </div>
+      <p class="hint">사이드 패널에서는 Chrome 이 허용 창을 띄우지 못해서, 처음 한 번은 여기서 허용합니다.</p>
+      <p id="voiceMsg" class="hint saved" aria-live="polite"></p>
+    </section>
+
+    <section aria-labelledby="hTrusted">
+      <h2 id="hTrusted">진짜 입력 (CDP)</h2>
+      <label class="radio"><input id="trusted" type="checkbox"> 브라우저 자체 입력으로 누르고 치기</label>
+      <p class="hint">가짜 이벤트를 거르는 칸·버튼과 닫힌 shadow DOM 용입니다. 쓰는 동안 Chrome 위에 "디버깅 중" 띠가 뜨고,
+        20초 쓰지 않으면 떼어 냅니다. 다른 출처 iframe 은 지금처럼 처리합니다.</p>
+    </section>
+
+    <section aria-labelledby="hServer">
+      <h2 id="hServer">서버</h2>
+      <div class="row">
+        <label class="field grow">손눈서브 서버 주소
+          <input id="server" type="url" spellcheck="false">
+        </label>
+        <span id="serverState" class="conn" data-state="checking">확인 중</span>
+      </div>
+      <p id="serverMsg" class="hint saved" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="shared.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

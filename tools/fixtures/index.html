@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>손눈 테스트 첫 페이지</title></head>
+<body>
+  <h1>손눈 테스트</h1>
+  <form action="results.html" method="get">
+    <label for="q">검색어</label>
+    <input id="q" name="q" placeholder="검색어를 입력">
+    <button type="submit">검색</button>
+  </form>
+  <p id="echo">입력값: (없음)</p>
+  <a href="page2.html">두 번째 페이지</a>
+  <label><input type="checkbox" id="agree"> 동의</label>
+  <input type="password" id="pw" placeholder="비밀번호">
+  <button style="display:none">숨은 버튼</button>
+  <button disabled>못 누르는 버튼</button>
+  <button id="counter" type="button">눌린 횟수 0</button>
+  <p id="long"></p>
+  <script>
+    // React 처럼 input 이벤트로 상태를 갱신하는 칸 (값만 바꾸고 이벤트를 안 쏘면 안 바뀐다)
+    document.getElementById("q").addEventListener("input", e => {
+      document.getElementById("echo").textContent = "입력값: " + e.target.value;
+    });
+    let n = 0;
+    document.getElementById("counter").addEventListener("click", e => { n++; e.target.textContent = "눌린 횟수 " + n; });
+    document.getElementById("long").textContent = "긴 본문 시작. " + "가나다라마바사 아자차카타파하. ".repeat(250) + "긴 본문 끝 표시.";
+  </script>
+</body>
+</html>

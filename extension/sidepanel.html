@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>손눈서브</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header class="bar">
+    <img src="icons/icon32.png" alt="" width="20" height="20">
+    <strong class="brand">손눈서브</strong>
+    <span id="conn" class="conn" data-state="checking" title="">연결 확인 중</span>
+    <button id="pause" class="ghost" type="button" aria-pressed="false" title="모든 보기·조작을 즉시 막습니다">멈춤</button>
+    <button id="openOptions" class="icon ghost" type="button" title="설정 · 사이트 권한 목록" aria-label="설정 · 사이트 권한 목록">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <section id="requests" class="requests" aria-live="assertive" hidden></section>
+
+  <section class="site" aria-label="이 사이트 권한">
+    <div class="site-row">
+      <span class="muted">이 사이트</span>
+      <span id="host" class="host">—</span>
+      <span id="levelHint" class="src"></span>
+      <button id="levelInfo" class="info" type="button" aria-expanded="false" aria-controls="levelHelp"
+              title="끔 · 눈길 · 손길이 뭔가요?" aria-label="권한 단계 설명">i</button>
+    </div>
+    <div id="levels" class="seg sub" role="radiogroup" aria-label="권한">
+      <button type="button" role="radio" data-level="off" aria-checked="false"><b>끔</b><small>안 봄</small></button>
+      <button type="button" role="radio" data-level="eye" aria-checked="false"><b>눈길</b><small>보기만</small></button>
+      <button type="button" role="radio" data-level="hand" aria-checked="false"><b>손길</b><small>보기+조작</small></button>
+    </div>
+    <div id="levelHelp" class="help" hidden>
+      <dl>
+        <dt>끔</dt><dd>에이전트가 이 사이트를 보지도 조작하지도 못합니다. 탭 목록에서도 제목·주소를 가립니다.</dd>
+        <dt>눈길</dt><dd>페이지 글을 읽고 화면을 볼 수만 있습니다. 클릭·입력·다른 주소로 이동은 막힙니다.</dd>
+        <dt>손길</dt><dd>보고 클릭·입력·이동까지 합니다. 결제·삭제처럼 되돌리기 어려운 버튼은 누르기 전에 여기서 허용을 묻습니다.</dd>
+      </dl>
+      <p class="hint">규칙은 하위 주소까지 적용됩니다 (bank.com 이면 www.bank.com 도). 전체 목록은 <button id="helpOptions" type="button" class="link">설정</button>에서.</p>
+    </div>
+    <p id="workTab" class="work" hidden></p>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" role="tab" id="tabChat" aria-selected="true" aria-controls="chatView">대화</button>
+    <button type="button" role="tab" id="tabLog" aria-selected="false" aria-controls="logView">기록</button>
+  </nav>
+
+  <main>
+    <section id="chatView" role="tabpanel" aria-labelledby="tabChat" class="view">
+      <div class="chatbar">
+        <select id="chatSelect" aria-label="대화 선택"></select>
+        <button id="newChat" type="button" class="icon ghost" title="새 대화" aria-label="새 대화">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <div class="menu">
+          <button id="moreBtn" type="button" class="icon ghost" title="더 보기" aria-label="더 보기" aria-haspopup="menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>
+          </button>
+          <div id="moreMenu" class="menu-list" role="menu" hidden>
+            <button id="exportChat" type="button" role="menuitem">스크립트로 내려받기<small>이 대화에서 성공한 조작을 다시 실행하는 Python</small></button>
+          </div>
+        </div>
+      </div>
+      <div id="messages" class="messages" aria-live="polite"></div>
+      <form id="composer" class="composer">
+        <div id="sessionRow" class="session">
+          <div class="pick" role="radiogroup" aria-label="세션">
+            <label class="chip"><input type="radio" name="backend" value="local" checked><span>로컬 Qwen</span></label>
+            <label class="chip"><input type="radio" name="backend" value="claude"><span>Claude Code</span></label>
+          </div>
+          <span id="sessionNote" class="note"></span>
+        </div>
+        <div id="voiceBar" class="voicebar" hidden aria-live="polite">
+          <span id="voiceMsg"></span>
+          <span class="voice-acts">
+            <button id="voiceAllow" type="button" class="link" hidden>마이크 허용하기</button>
+            <button id="voiceCancel" type="button" class="link">취소</button>
+          </span>
+          <i id="voiceProgress" class="progress" hidden></i>
+        </div>
+        <div id="inputbox" class="inputbox">
+          <textarea id="input" rows="1" placeholder="이 탭에서 할 일을 알려주세요" aria-label="할 일"></textarea>
+          <button id="mic" type="button" class="icon ghost" title="말로 입력" aria-label="말로 입력" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          </button>
+          <button id="send" type="submit" class="icon send" title="보내기 (Enter · 줄바꿈은 Shift+Enter)" aria-label="보내기">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+          </button>
+          <button id="stop" type="button" class="icon stop" title="중지" aria-label="중지" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section id="logView" role="tabpanel" aria-labelledby="tabLog" class="view" hidden>
+      <p class="hint">에이전트가 이 브라우저에서 본 것·한 것 (대화·Claude Code·import 모두)</p>
+      <ol id="activity" class="activity"></ol>
+    </section>
+  </main>
+
+  <script src="shared.js"></script>
+  <script src="md.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

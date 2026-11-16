@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><title>플레이그라운드 새 탭</title></head>
+<body>
+  <h1>S21 로 열린 새 탭</h1>
+  <p>플레이그라운드(원래 탭)로 돌아가려면 switch_tab.</p>
+  <script>if (window.opener) window.opener.postMessage({ sonnunNewTab: true }, "*");</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+/* 설정 화면 전용 (공통은 base.css) */
+.bar { display: flex; align-items: center; gap: var(--gap); padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--bg-2); }
+.brand { font-size: 0.95rem; }
+
+.page { max-width: 760px; margin: 0 auto; padding: 8px 16px 48px; }
+.page section { padding: 20px 0; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+.page section:last-child { border-bottom: 0; }
+h2 { font-size: 1rem; margin: 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.row-label { font-weight: 600; }
+.default .seg { width: 240px; }
+.field.inline { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+.field.inline input { width: 84px; font-variant-numeric: tabular-nums; }
+.field.grow { flex: 1; min-width: 240px; margin: 0; }
+.saved { color: var(--ok); min-height: 1.2em; }
+.hint.warn { color: var(--warn); }
+.hint.err { color: var(--err); }
+
+/* 사이트 추가 */
+.add { display: flex; gap: 8px; margin-top: 8px; }
+.add input { flex: 1; min-width: 0; min-height: 34px; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 8px; background: var(--bg); }
+.add select { min-height: 34px; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 6px; background: var(--bg); }
+
+/* 목록 */
+.list-tools { display: flex; align-items: center; gap: 12px; }
+.list-tools input { margin-left: auto; width: 200px; min-height: 30px; border: 1px solid var(--line); border-radius: var(--radius); padding: 0 8px; background: var(--bg); }
+.rules { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); }
+.rules:empty { display: none; }
+.rules li { display: grid; grid-template-columns: 1fr 200px auto; align-items: center; gap: 12px; padding: 8px 12px; border-top: 1px solid var(--line); }
+.rules li:first-child { border-top: 0; }
+.rules .site { min-width: 0; }
+.rules .site strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rules .site span { font-size: var(--t-small); color: var(--fg-2); }
+.rules li[data-level="off"] .site strong::before { content: "● "; color: var(--err); }
+.rules li[data-level="eye"] .site strong::before { content: "● "; color: var(--warn); }
+.rules li[data-level="hand"] .site strong::before { content: "● "; color: var(--ok); }
+.rules li.flash { background: var(--accent-soft); transition: background 600ms; }
+.empty-rules { border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px 12px; color: var(--fg-2); }
+.empty-rules strong { color: var(--fg); display: block; margin-bottom: 2px; }
+
+.conn { font-size: var(--t-small); color: var(--fg-2); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.conn::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--fg-2); }
+.conn[data-state="ok"]::before { background: var(--ok); }
+.conn[data-state="down"]::before { background: var(--err); }
+
+@media (max-width: 560px) {
+  .rules li { grid-template-columns: 1fr auto; }
+  .rules .seg { grid-column: 1 / -1; grid-row: 2; }
+  .add { flex-wrap: wrap; }
+  .add input { flex-basis: 100%; }
+  .list-tools input { width: 140px; }
+}
+
+.radios { display: grid; gap: 4px; }
+#mic:target { scroll-margin-top: 12px; }
+h3 { font-size: var(--t-small); margin: 6px 0 0; color: var(--fg-2); font-weight: 600; }
+#sttState { word-break: break-all; }

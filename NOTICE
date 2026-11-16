@@ -1,0 +1,21 @@
+sonnun (손눈서브)
+Copyright 2026 Taeksu Kim
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party software this code uses (installed separately, not included in this repository):
+
+- basic_agent (MIT) — agent loop for the local-model chat session. https://github.com/Taeksu-Kim/basic_agent
+- FastAPI, Starlette, Uvicorn, Pydantic (MIT / BSD) — the local server.
+- Playwright for Python (Apache-2.0) — end-to-end checks and the "playwright" script export format.
+- faster-whisper (MIT), CTranslate2 (MIT) — optional Whisper speech-to-text server (tools/stt_server.py).
+  Whisper model weights (MIT) are downloaded by faster-whisper.
+- Supertonic (see its own license) — optional, only for generating test speech in tools/voice_check.py.
+- numpy (BSD-3-Clause) — optional, speech tools.
+
+Services used at run time, chosen by the user:
+- A local OpenAI-compatible LLM server (e.g. vLLM). Model weights are under their own licenses.
+- Claude Code (optional chat session) — page content is sent to Anthropic when this session is chosen.
+- Google speech recognition through Chrome's built-in Web Speech API (optional voice engine) — the user's voice is sent to Google.
+
+"Chrome" is a trademark of Google LLC. "Claude" is a trademark of Anthropic, PBC. This project is not affiliated with either.

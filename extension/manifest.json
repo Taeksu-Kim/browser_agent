@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "손눈서브 – 로컬 에이전트의 눈과 손",
+  "short_name": "손눈서브",
+  "version": "0.1.0",
+  "description": "속눈썹처럼 눈 바로 옆에서 — 로컬 에이전트가 내 브라우저를 보고 조작합니다 (폐쇄망 지원)",
+  "permissions": [
+    "tabs",
+    "scripting",
+    "storage",
+    "sidePanel",
+    "alarms",
+    "debugger"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "손눈서브 열기",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}
