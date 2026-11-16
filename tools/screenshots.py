@@ -52,10 +52,21 @@ def main() -> int:
     threading.Thread(target=srv.run, daemon=True).start()
     time.sleep(1.5)
     b = Sonnun(server)
+    # 음성 캡처: Whisper 서버(tools/stt_server.py --tts)가 켜져 있으면, 그 TTS 로 만든 말을 가짜 마이크로 넣어 진짜로 받아적는다
+    mic_args, voice = [], False
+    try:
+        sys.path.insert(0, str(ROOT / "tools"))
+        from voice_check import tts_wav
+        tts_wav("S18 결제하기 버튼 눌러줘", TMP / "say.wav")
+        mic_args = ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream",
+                    f"--use-file-for-fake-audio-capture={TMP / 'say.wav'}"]
+        voice = True
+    except Exception as exc:  # noqa: BLE001
+        print("음성 캡처 건너뜀 (stt_server.py --tts 가 꺼져 있음):", type(exc).__name__)
     fallback = sorted(Path.home().glob(".cache/ms-playwright/chromium-*/chrome-linux64/chrome"))
     with sync_playwright() as p:
         kw = dict(headless=True, viewport={"width": PAGE_W, "height": H},
-                  args=[f"--disable-extensions-except={EXT}", f"--load-extension={EXT}"])
+                  args=[f"--disable-extensions-except={EXT}", f"--load-extension={EXT}", *mic_args])
         try:
             ctx = p.chromium.launch_persistent_context(str(TMP / "profile"), channel="chromium", **kw)
         except Exception:  # noqa: BLE001
@@ -78,6 +89,21 @@ def main() -> int:
         panel.wait_for_load_state()
         time.sleep(1.5)
 
+        # ⓪ 확장 올리기 화면 · 처음 연 패널
+        ext = ctx.new_page()
+        ext.set_viewport_size({"width": 1000, "height": 560})
+        ext.goto("chrome://extensions")
+        time.sleep(0.8)
+        try:
+            ext.click("#devMode")
+            time.sleep(0.6)
+        except Exception:  # noqa: BLE001
+            pass
+        ext.screenshot(path=str(OUT / "usage-extensions.png"))
+        ext.close()
+        page.bring_to_front()
+        panel.screenshot(path=str(OUT / "usage-first.png"))
+
         # ① 대화: 실제 로컬 Qwen + look(비전)
         page.bring_to_front()
         page.evaluate("document.querySelector('#s17').scrollIntoView({block: 'center'})")
@@ -93,6 +119,13 @@ def main() -> int:
         panel.screenshot(path=str(TMP / "panel1.png"))
         side_by_side(TMP / "page1.png", TMP / "panel1.png", OUT / "chat.png")
         print("답:", panel.locator(".msg.assistant .md").last.inner_text()[:200])
+        panel.click(".msg.assistant .steps summary >> nth=-1")          # 작업 단계 펼치기
+        time.sleep(0.2)
+        panel.screenshot(path=str(OUT / "usage-steps.png"))
+        panel.click("#tabLog")
+        time.sleep(1.0)
+        panel.screenshot(path=str(OUT / "usage-log.png"))
+        panel.click("#tabChat")
 
         # ② 승인 카드: 에이전트가 '결제하기'를 누르려 함 → 패널에서 허용/거부
         ref = b.find(text="S18")["elements"][0]["ref"]
@@ -109,6 +142,42 @@ def main() -> int:
         side_by_side(TMP / "page2.png", TMP / "panel2.png", OUT / "approve.png")
         panel.click(".req button:has-text('거부')")
         th.join(10)
+
+        # ②-2 사람에게 넘기기 (ask_user)
+        th = threading.Thread(target=lambda: _quiet(lambda: b.ask_user(
+            message="이 사이트는 로그인이 필요합니다. 로그인한 뒤 '다 했어요'를 눌러 주세요", timeout_sec=60)))
+        th.start()
+        for _ in range(50):
+            if panel.locator(".req").count():
+                break
+            time.sleep(0.2)
+        time.sleep(0.3)
+        panel.screenshot(path=str(OUT / "usage-ask.png"))
+        panel.click(".req button:has-text('다 했어요')")
+        th.join(10)
+
+        # ②-3 음성 입력 (Whisper, 진짜 받아적기): 듣는 중 → 1.5초 뒤 보냄 (여기서는 Esc 로 취소)
+        if voice:
+            sw.evaluate("() => chrome.storage.local.set({voiceEngine: 'whisper', voiceMode: 'preview'})")
+            time.sleep(0.3)
+            panel.evaluate("refreshStatus()")
+            time.sleep(0.5)
+            panel.click("#mic")
+            for _ in range(50):
+                if panel.is_visible("#voiceBar") and "듣는 중" in panel.inner_text("#voiceBar"):
+                    break
+                time.sleep(0.1)
+            time.sleep(0.6)
+            panel.screenshot(path=str(OUT / "usage-voice-listen.png"))
+            for _ in range(200):
+                if panel.is_visible("#voiceBar") and "뒤 보냅니다" in panel.inner_text("#voiceBar"):
+                    break
+                time.sleep(0.05)
+            panel.screenshot(path=str(OUT / "usage-voice-preview.png"))
+            panel.keyboard.press("Escape")
+            print("받아적음:", panel.input_value("#input"))
+            panel.fill("#input", "")
+            sw.evaluate("() => chrome.storage.local.set({voiceEngine: 'google', voiceMode: 'preview'})")
 
         # ③ 권한 단계 설명 (ⓘ)
         panel.click("#levelInfo")
@@ -137,6 +206,14 @@ def main() -> int:
         page.evaluate("scrollTo(0, 0)")
         time.sleep(0.5)
         page.screenshot(path=str(OUT / "playground.png"))
+
+        # ⑥ 문제 해결: 서버가 꺼졌을 때 패널
+        srv.should_exit = True
+        for _ in range(80):
+            if panel.get_attribute("#conn", "data-state") == "down":
+                break
+            time.sleep(0.2)
+        panel.screenshot(path=str(OUT / "usage-down.png"))
         ctx.close()
     srv.should_exit = True
     for f in sorted(OUT.glob("*.png")):
