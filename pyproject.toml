@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sonnun"
+name = "browser_agent"
 version = "0.1.0"
 description = "손눈서브 — eyes and hands for a local agent in your own Chrome (extension + local server, closed-network friendly)"
 requires-python = ">=3.10"

@@ -1,6 +1,9 @@
-# 손눈서브 (sonnun)
+# browser_agent — 손눈서브
 
-> 속눈썹처럼 눈 바로 옆에서 — 로컬 에이전트가 **내 Chrome** 을 보고(눈) 조작합니다(손). 폐쇄망·로컬 모델용.
+> 로컬 에이전트가 **내 Chrome** 을 보고(눈) 조작합니다(손). 폐쇄망·로컬 모델용.
+
+**손눈서브**는 에이전트의 **손**과 **눈**이 되어 **준다(serve)** 는 뜻이고, 소리는 **속눈썹** — 눈 바로 옆에 붙어 있는 것 — 에서 왔습니다.
+서버를 켜는 명령 `sonnun serve` 를 읽으면 그대로 "손눈서브"입니다.
 
 *Eyes and hands for a local agent in your own Chrome: a Chrome extension plus a small local server give any model
 (a local LLM, Claude Code, or your own Python) tools to read and operate the pages you are logged in to — with per-site
@@ -36,7 +39,7 @@ Python 3.10 이상, Chrome(또는 Chromium 계열).
 
 ```bash
 git clone https://github.com/Taeksu-Kim/basic_agent        # 로컬 LLM 대화를 쓸 때 (이 저장소 옆에, 또는 BASIC_AGENT_PATH)
-git clone https://github.com/Taeksu-Kim/sonnun && cd sonnun
+git clone https://github.com/Taeksu-Kim/browser_agent && cd browser_agent
 python -m pip install -e .
 sonnun serve                                               # http://127.0.0.1:8771 (이 PC 안에서만 열림)
 ```
